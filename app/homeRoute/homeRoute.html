@@ -10,15 +10,15 @@
         </form>
     </section>
     <section class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8">
-        <div class="row">
+        <div class="row" ng-repeat="route in homeRoute.routes">
             <div>
-                <label for="start-point">Start point: </label>
+                <label for="start-point">Start point: {{route.start}} </label>
             </div>
 
             <div>
-                <label for="end-point">End point: </label>
+                <label for="end-point">End point: {{route.end}}</label>
             </div>
-            <button class="btn btn-danger">REMOVE ROUTE</button>
+            <button class="btn btn-danger" ng-click="homeRoute.removeRoute(route)">REMOVE ROUTE</button>
         </div>
     </section>
 </article>
