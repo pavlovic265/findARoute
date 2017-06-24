@@ -7,8 +7,8 @@ import routing from './app.config';
 import homeRoute from './homeRoute/homeRoute.js';
 
 angular.module('app', [uirouter, homeRoute])
-    .constant('GOOGLE_API', {
-        'URL' : 'https://maps.googleapis.com/maps/api/directions/json',
+    .constant('API', {
+        'GOOGLE_ROUTE_URL' : 'https://maps.googleapis.com/maps/api/directions/json',
         'KEY': 'AIzaSyBj_FS2naYF-iT06-nXk_3lhCQEQQrCYbg'
     })
     .config(routing);

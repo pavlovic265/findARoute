@@ -1,22 +1,25 @@
 import angular from 'angular';
 
 RoutesList.$inject = [];
+
 function RoutesList(){
-    var routes = [];
-    if(localStorage.getItem('routes')){
-        routes = localStorage.getItem('routes');
-    }
+    let routes = [];
 
     function getRoutes() {
+        if( routes.length === 0 && localStorage.getItem('routes')){
+            routes = JSON.parse(localStorage.getItem('routes'));
+        }
+
         return routes;
     }
 
     function addRoute(route) {
-        routes.add(route);
+        routes.push(route);
+        localStorage.setItem('routes', JSON.stringify(routes));
     }
 
     function removeRoute(route) {
-        var startIndex = -1;
+        let startIndex = -1;
         routes.find(function(item, index){
             startIndex = index;
             return item.start === route.start && item.end === route.end;
@@ -25,6 +28,7 @@ function RoutesList(){
         if(startIndex !== -1) {
             routes.splice(startIndex, 1)
         }
+        localStorage.setItem('routes', JSON.stringify(routes));
     }
 
     return { getRoutes, addRoute, removeRoute };
