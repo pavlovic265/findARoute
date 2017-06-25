@@ -3,12 +3,15 @@
         <form>
             <label for="start-point">Start point: </label>
             <input type="text" name="start-point" class="form-control"
-                placeholder="Start point..." ng-model="homeRoute.route.start"/>
+                placeholder="Start point..." ng-model="homeRoute.route.start" ng-disabled="homeRoute.route.searching"/>
             <label for="end-point">End point: </label>
             <input type="text" name="end-point" class="form-control"
-                placeholder="End point..." ng-model="homeRoute.route.end" />
+                placeholder="End point..." ng-model="homeRoute.route.end" ng-disabled="homeRoute.route.searching" />
             <br/>
-            <button class="btn btn-primary" ng-click="homeRoute.searchRoute(homeRoute.route); ">FIND ROUTE</button>
+            <button class="btn btn-primary" ng-disabled="homeRoute.route.searching"
+                ng-click="homeRoute.searchRoute(homeRoute.route);">
+                {{ !homeRoute.route.searching ? 'FIND ROUTE' : 'SEARCHING..' }}
+            </button>
         </form>
     </section>
     <section class="col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8">

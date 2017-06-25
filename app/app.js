@@ -5,10 +5,7 @@ import uirouter from 'angular-ui-router';
 
 import routing from './app.config';
 import homeRoute from './homeRoute/homeRoute.js';
+import errors from './errors/errors.js';
 
-angular.module('app', [uirouter, homeRoute])
-    .constant('API', {
-        'GOOGLE_ROUTE_URL' : 'https://maps.googleapis.com/maps/api/directions/json',
-        'KEY': 'AIzaSyBj_FS2naYF-iT06-nXk_3lhCQEQQrCYbg'
-    })
+angular.module('app', [uirouter, homeRoute, errors])
     .config(routing);

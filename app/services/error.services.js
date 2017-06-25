@@ -1,26 +1,12 @@
 import angular from 'angular';
 
-RouteForm.$inject = [];
+ErrorService.$inject = [];
 
-function RouteForm(){
+function ErrorService(){
     let errors = [];
 
-    function extract(response) {
-        return response.data || response;
-    }
-
-    function searchRouteRespnse(response, status) {
-        if(status !== google.maps.DirectionsStatus.OK) {
-            tempRoute.start = '';
-            tempRoute.end = '';
-            return;
-        }
-        response = extract(response);
-        tempRoute.distance = response.routes[0].legs[0].distance.text;
-        tempRoute.duration = response.routes[0].legs[0].duration.text;
-        RoutesList.addRoute(angular.extend({}, tempRoute));
-        tempRoute.start = '';
-        tempRoute.end = '';
+    function clearErrors() {
+        errors.length = 0;
     }
 
     function getErrors() {
@@ -36,9 +22,9 @@ function RouteForm(){
         errors.push(error)
     }
 
-    return { getErrors, removeError, addError };
+    return { getErrors, removeError, addError, clearErrors };
 }
 
-export default angular.module('services.route-form', [])
-    .service('RouteForm', RouteForm)
+export default angular.module('services.error', [])
+    .service('ErrorService', ErrorService)
     .name;

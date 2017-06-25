@@ -3,7 +3,11 @@ import angular from 'angular';
 RoutesList.$inject = [];
 
 function RoutesList(){
-    let routes = [];
+    let routes = [],
+        service = { getRoutes, addRoute, removeRoute };
+
+    return service;
+;
 
     function getRoutes() {
         if( routes.length === 0 && localStorage.getItem('routes')){
@@ -30,10 +34,6 @@ function RoutesList(){
         }
         localStorage.setItem('routes', JSON.stringify(routes));
     }
-
-    return { getRoutes, addRoute, removeRoute };
-
-
 }
 
 export default angular.module('services.routes-list', [])

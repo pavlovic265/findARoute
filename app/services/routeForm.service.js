@@ -1,53 +1,52 @@
 import angular from 'angular';
 
+import ErrorsSrvice from './error.services';
 import RoutesList from './routesList.services';
 
-RouteForm.$inject = ['$http', 'RoutesList', 'API'];
+RouteForm.$inject = ['RoutesList', 'ErrorService', '$http'];
 
-function RouteForm($http, $sce, $sceDelegate, RoutesList, API){
+function RouteForm(RoutesList, ErrorService, $http){
 
+    let service = { searchRoute };
 
-    let directionsService = new google.maps.DirectionsService,
-        tempRoute;
-
-
+        return service;
 
     function extract(response) {
-        return response.data || response;
-    }
-
-
-    function searchRouteRespnse(response, status) {
-        if(status !== google.maps.DirectionsStatus.OK) {
-            tempRoute.start = '';
-            tempRoute.end = '';
-            return;
-        }
-        response = extract(response);
-        tempRoute.distance = response.routes[0].legs[0].distance.text;
-        tempRoute.duration = response.routes[0].legs[0].duration.text;
-        RoutesList.addRoute(angular.extend({}, tempRoute));
-        tempRoute.start = '';
-        tempRoute.end = '';
+        return response.data;
     }
 
     function searchRoute(route) {
-
+        route.searching = true;
         if(route.start === '' || route.end === '') {
+            ErrorService.addError('Filds can not be empty!');
+            resetRouteValue(route);
             return;
         }
 
-        directionsService.route({
-            origin: route.start,
-            destination: route.end,
-            travelMode: google.maps.DirectionsTravelMode.DRIVING},
-            searchRouteRespnse)
-
+        $http.get(`/googleAp1i/${route.start}/${route.end}`)
+        .then(function(response){
+            response = extract(response);
+            route.distance = response.routes[0].legs[0].distance.text;
+            route.duration = response.routes[0].legs[0].duration.text;
+            RoutesList.addRoute(route);
+            resetRouteValue(route);
+        })
+        .catch(function(e){
+            ErrorService.addError('There was an error!')
+            resetRouteValue(route);
+        });
     }
 
-    return { searchRoute };
+    function resetRouteValue(route) {
+        route.start = '';
+        route.end = '';
+        route.distance = '';
+        route.duration = '';
+        route.searching = false;
+        
+    }
 }
 
-export default angular.module('services.route-form', [])
+export default angular.module('services.routes-form', [ErrorsSrvice, RoutesList])
     .service('RouteForm', RouteForm)
     .name;

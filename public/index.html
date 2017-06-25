@@ -5,6 +5,11 @@
         <title>Angular App</title>
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBj_FS2naYF-iT06-nXk_3lhCQEQQrCYbg&libraries=places"></script>    </head>
     <body>
+            <article ng-controller="ErrorController as errorCtrl">
+                <section class="alert alert-danger" ng-repeat="error in errorCtrl.errors track by $index">
+                    <strong>Danger!</strong> {{error}}
+                </section>
+            </article>
         <div class="container">
 
             <ui-view></ui-view>
