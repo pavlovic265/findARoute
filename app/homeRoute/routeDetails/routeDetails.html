@@ -4,7 +4,10 @@
     </div>
     <div id="right-panel">
         <div id="directionsPanelTitle">
-            FROM <b>{{routeDetails.route.start}}</b> TO <b>{{routeDetails.route.end}}</b>
+            <div class="zebra"><span class="bold-info"> FROM - </span> {{routeDetails.route.start}}</br></div>
+            <div class="zebra"><span class="bold-info"> TO - </span> {{routeDetails.route.end}}</br></div>
+            <div class="zebra"><span class="bold-info"> DISTANCE - </span> {{routeDetails.route.distance}} <span class="glyphicon glyphicon-road" aria-hidden="true"></span></br></div>
+            <div class="zebra"><span class="bold-info"> DURATION - </span> {{routeDetails.route.duration}} <span class="glyphicon glyphicon-time" aria-hidden="true"></div>
         </div>
         <div id="directionsPanelBody"></div>
     </div>

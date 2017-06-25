@@ -3,14 +3,16 @@
         <form>
             <label for="start-point">Start point: </label>
             <input type="text" name="start-point" class="form-control"
-                placeholder="Start point..." ng-model="homeRoute.route.start" ng-disabled="homeRoute.route.searching || homeRoute.route.myLocation"/>
-            <label for="end-point">End point: </label>
+                placeholder="Type in a starting point..." ng-model="homeRoute.route.start"
+                ng-disabled="homeRoute.route.searching || homeRoute.route.myLocation"/>
+            <label for="end-point">Destination point: </label>
             <input type="text" name="end-point" class="form-control"
-                placeholder="End point..." ng-model="homeRoute.route.end" ng-disabled="homeRoute.route.searching" />
+                placeholder="Type in a destination point..." ng-model="homeRoute.route.end" ng-disabled="homeRoute.route.searching" />
             <br/>
             <div>
-                <button class="btn btn-primary" ng-disabled="homeRoute.route.searching"
+                <button class="btn btn-success" ng-disabled="homeRoute.route.searching"
                     ng-click="homeRoute.searchRoute(homeRoute.route);">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                     {{ !homeRoute.route.searching ? 'FIND ROUTE' : 'SEARCHING..' }}
                 </button>
                 <label>
@@ -20,12 +22,21 @@
         </form>
     </section>
     <section class="row col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8 spacing">
-        <div class="col-lg-12 col-md-12 col-sm-12 spacing" ng-repeat="route in homeRoute.routes track by $index">
-            <button class="btn btn-danger" ng-click="homeRoute.removeRoute(route)">REMOVE ROUTE</button><br/>
-            <label for="start-point">Start point: </label><span>{{::route.start}}</span><br/>
-            <label for="end-point">End point: </label><span>{{::route.end}}</span><br/>
-            <label for="distance">Destination: </label><span>{{::route.distance}}</span><br/>
-            <label for="duration">Time: </label><span>{{::route.duration}}</span>
+        <div class="col-lg-offset-2 col-lg-8 caption">
+            <h4>SEARCH HISTORY</h4>
+        </div>
+        <div class="col-lg-offset-2 col-lg-8 col-md-12 col-sm-12 spacing zebra fade"
+            ng-repeat="route in homeRoute.routes | orderBy:'id':true track by $index">
+            <button class="btn btn-danger" ng-click="homeRoute.removeRoute(route);">
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> REMOVE ROUTE
+            </button>
+            <button class="btn btn-primary" ng-click="homeRoute.searchRoute(route);">
+                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> CHECK AGAIN
+            </button><br/>
+            <label for="start-point">From: </label>{{::route.start}}</span> <br/>
+            <label for="end-point">To: </label>{{::route.end}} <br/>
+            <label for="distance">Destination: </label>{{::route.distance}} <span class="glyphicon glyphicon-road" aria-hidden="true"></span><br/>
+            <label for="duration">Time: </label>{{::route.duration}} <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
         </div>
     </section>
 </article>

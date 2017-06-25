@@ -13,6 +13,10 @@ export default function HomeRouteController(RoutesList, RouteForm) {
         };
 
     homeRoute.routes =  RoutesList.getRoutes();
+
+    console.log('homeRoute.routes');
+    console.log(homeRoute.routes);
+
     homeRoute.addRoute = RoutesList.addRoute;
     homeRoute.removeRoute = RoutesList.removeRoute;
 
