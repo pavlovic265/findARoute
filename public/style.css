@@ -47,6 +47,11 @@ html, body {
 .spacing {
     margin: 10px;
 }
+.animate-remove-route
+{
+    height: 0px;
+    transition: height 2s;
+}
 @media print {
     #map {
         height: 500px;

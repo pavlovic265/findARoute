@@ -18,8 +18,13 @@ function RoutesList(){
     }
 
     function addRoute(route) {
-        routes.push(route);
-        localStorage.setItem('routes', JSON.stringify(routes));
+        var exitRoute = routes.find(function(item){
+            return angular.equals(item, route);
+        });
+        if(angular.isUndefined(exitRoute)) {
+            routes.push(route);
+            localStorage.setItem('routes', JSON.stringify(routes));
+        }
     }
 
     function removeRoute(route) {

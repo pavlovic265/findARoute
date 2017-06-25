@@ -1,9 +1,13 @@
 import angular from 'angular';
+import toastr from 'angular-toastr';
 
-ErrorService.$inject = [];
+ErrorService.$inject = [toastr];
 
-function ErrorService(){
-    let errors = [];
+function ErrorService(toastr){
+    let errors = [],
+        service = { getErrors, removeError, addError, clearErrors };
+
+    return service;
 
     function clearErrors() {
         errors.length = 0;
@@ -19,12 +23,22 @@ function ErrorService(){
     }
 
     function addError(error) {
+        window.test1 = toastr;
+        window.test2 = errors;
         if(-1 === errors.indexOf(error)) {
+            toastr.error(error, 'Error', {
+                closeButton: true,
+                onTap: function() {
+                    service.removeError(error);
+                },
+                onHidden: function(){
+                    service.removeError(error);
+                }
+            });
             errors.push(error)
         }
     }
 
-    return { getErrors, removeError, addError, clearErrors };
 }
 
 export default angular.module('services.error', [])

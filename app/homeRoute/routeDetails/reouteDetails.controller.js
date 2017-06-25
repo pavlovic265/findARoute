@@ -1,7 +1,7 @@
 
-RouteDetailsController.$inject = ['$scope', 'RoutesList', 'ErrorService', '$stateParams'];
+RouteDetailsController.$inject = ['$scope', 'RoutesList', 'ErrorService', '$state', '$stateParams'];
 
-export default function RouteDetailsController($scope, RoutesList, ErrorService, $stateParams) {
+export default function RouteDetailsController($scope, RoutesList, ErrorService, $state, $stateParams) {
     let routeDetails = this,
         directionsService = new google.maps.DirectionsService,
         directionsDisplay = new google.maps.DirectionsRenderer,
