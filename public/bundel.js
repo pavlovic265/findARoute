@@ -45173,9 +45173,9 @@ function routing($urlRouterProvider, $locationProvider) {
 
 
 
-RouteForm.$inject = ['RoutesList', 'ErrorService', '$http'];
+RouteForm.$inject = ['RoutesList', 'ErrorService', '$http', '$state'];
 
-function RouteForm(RoutesList, ErrorService, $http) {
+function RouteForm(RoutesList, ErrorService, $http, $state) {
 
     let service = { searchRoute };
 
@@ -45187,22 +45187,25 @@ function RouteForm(RoutesList, ErrorService, $http) {
 
     function searchRoute(route) {
         route.searching = true;
-        if (route.start === '' || route.end === '') {
+        if (route.start === '' && !route.myLocation || route.end === '') {
             ErrorService.addError('Filds can not be empty!');
             resetRouteValue(route);
-            return;
-        }
+        } else {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
 
-        $http.get(`/directions/${route.start}/${route.end}`).then(function (response) {
-            response = extract(response);
-            route.distance = response.routes[0].legs[0].distance.text;
-            route.duration = response.routes[0].legs[0].duration.text;
-            RoutesList.addRoute(route);
-            resetRouteValue(route);
-        }).catch(function (e) {
-            ErrorService.addError('There was an error!');
-            resetRouteValue(route);
-        });
+                    if (route.start === '') {
+                        route.start = `${position.coords.latitude}, ${position.coords.longitude}`;
+                    }
+
+                    $state.go('details', { 'start': route.start, 'end': route.end });
+                }, function () {
+                    ErrorService.addError('Filds can not be empty!');
+                });
+            } else {
+                ErrorService.addError('Browser dose not support geolocation!');
+            }
+        }
     }
 
     function resetRouteValue(route) {
@@ -45211,6 +45214,7 @@ function RouteForm(RoutesList, ErrorService, $http) {
         route.distance = '';
         route.duration = '';
         route.searching = false;
+        route.myLocation = false;
     }
 }
 
@@ -45246,7 +45250,9 @@ function ErrorService() {
     }
 
     function addError(error) {
-        errors.push(error);
+        if (-1 === errors.indexOf(error)) {
+            errors.push(error);
+        }
     }
 
     return { getErrors, removeError, addError, clearErrors };
@@ -45277,7 +45283,7 @@ function routes($stateProvider) {
 /* 105 */
 /***/ (function(module, exports) {
 
-module.exports = "<article class=\"row\">\r\n    <section class=\"col-lg-offset-4 col-lg-4 col-md-offset-4 col-md-4 col-sm-offset-4 col-sm-4\">\r\n        <form>\r\n            <label for=\"start-point\">Start point: </label>\r\n            <input type=\"text\" name=\"start-point\" class=\"form-control\"\r\n                placeholder=\"Start point...\" ng-model=\"homeRoute.route.start\" ng-disabled=\"homeRoute.route.searching\"/>\r\n            <label for=\"end-point\">End point: </label>\r\n            <input type=\"text\" name=\"end-point\" class=\"form-control\"\r\n                placeholder=\"End point...\" ng-model=\"homeRoute.route.end\" ng-disabled=\"homeRoute.route.searching\" />\r\n            <br/>\r\n            <button class=\"btn btn-primary\" ng-disabled=\"homeRoute.route.searching\"\r\n                ng-click=\"homeRoute.searchRoute(homeRoute.route); homeRoute.routeDetails();\">\r\n                {{ !homeRoute.route.searching ? 'FIND ROUTE' : 'SEARCHING..' }}\r\n            </button>\r\n        </form>\r\n    </section>\r\n    <section class=\"col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8\">\r\n        <div class=\"row\" ng-repeat=\"route in homeRoute.routes track by $index\">\r\n            <div>\r\n                <label for=\"start-point\">Start point: </label><span>{{route.start}}</span>\r\n                <label for=\"end-point\">End point: </label><span>{{route.end}}</span>\r\n            </div>\r\n\r\n            <div>\r\n                <label for=\"distance\">Destination: </label><span>{{route.distance}}</span>\r\n                <label for=\"duration\">Time: </label><span>{{route.duration}}</span>\r\n            </div>\r\n            <button class=\"btn btn-danger\" ng-click=\"homeRoute.removeRoute(route)\">REMOVE ROUTE</button>\r\n        </div>\r\n    </section>\r\n</article>";
+module.exports = "<article class=\"row\">\r\n    <section class=\"col-lg-offset-4 col-lg-4 col-md-offset-4 col-md-4 col-sm-offset-4 col-sm-4 spacing\">\r\n        <form>\r\n            <label for=\"start-point\">Start point: </label>\r\n            <input type=\"text\" name=\"start-point\" class=\"form-control\"\r\n                placeholder=\"Start point...\" ng-model=\"homeRoute.route.start\" ng-disabled=\"homeRoute.route.searching || homeRoute.route.myLocation\"/>\r\n            <label for=\"end-point\">End point: </label>\r\n            <input type=\"text\" name=\"end-point\" class=\"form-control\"\r\n                placeholder=\"End point...\" ng-model=\"homeRoute.route.end\" ng-disabled=\"homeRoute.route.searching\" />\r\n            <br/>\r\n            <div>\r\n                <button class=\"btn btn-primary\" ng-disabled=\"homeRoute.route.searching\"\r\n                    ng-click=\"homeRoute.searchRoute(homeRoute.route);\">\r\n                    {{ !homeRoute.route.searching ? 'FIND ROUTE' : 'SEARCHING..' }}\r\n                </button>\r\n                <label>\r\n                    <input type=\"checkbox\" ng-checked=\"homeRoute.route.myLocation\" ng-click=\"homeRoute.route.myLocation = !homeRoute.route.myLocation\"> Use my current location\r\n                </label>\r\n            </div>\r\n        </form>\r\n    </section>\r\n    <section class=\"row col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8 spacing\">\r\n        <div class=\"col-lg-12 col-md-12 col-sm-12 spacing\" ng-repeat=\"route in homeRoute.routes track by $index\">\r\n            <button class=\"btn btn-danger\" ng-click=\"homeRoute.removeRoute(route)\">REMOVE ROUTE</button><br/>\r\n            <label for=\"start-point\">Start point: </label><span>{{::route.start}}</span><br/>\r\n            <label for=\"end-point\">End point: </label><span>{{::route.end}}</span><br/>\r\n            <label for=\"distance\">Destination: </label><span>{{::route.distance}}</span><br/>\r\n            <label for=\"duration\">Time: </label><span>{{::route.duration}}</span>\r\n        </div>\r\n    </section>\r\n</article>";
 
 /***/ }),
 /* 106 */
@@ -45287,12 +45293,15 @@ module.exports = "<article class=\"row\">\r\n    <section class=\"col-lg-offset-
 /* harmony export (immutable) */ __webpack_exports__["a"] = HomeRouteController;
 
 
-HomeRouteController.$inject = ['RoutesList', 'RouteForm', '$state'];
+HomeRouteController.$inject = ['RoutesList', 'RouteForm'];
 
-function HomeRouteController(RoutesList, RouteForm, $state) {
+function HomeRouteController(RoutesList, RouteForm) {
     let homeRoute = this;
     homeRoute.route = {
+        start: '',
+        end: '',
         searching: false,
+        myLocation: false,
         distance: '',
         duration: ''
     };
@@ -45302,9 +45311,6 @@ function HomeRouteController(RoutesList, RouteForm, $state) {
     homeRoute.removeRoute = RoutesList.removeRoute;
 
     homeRoute.searchRoute = RouteForm.searchRoute;
-    homeRoute.routeDetails = function () {
-        $state.go('details', { 'start': homeRoute.route.start, 'end': homeRoute.route.end });
-    };
 }
 
 /***/ }),
@@ -45394,21 +45400,22 @@ function routes($stateProvider) {
 /* harmony export (immutable) */ __webpack_exports__["a"] = RouteDetailsController;
 
 
-RouteDetailsController.$inject = ['$state', '$stateParams'];
+RouteDetailsController.$inject = ['$scope', 'RoutesList', 'ErrorService', '$stateParams'];
 
-function RouteDetailsController($state, $stateParams) {
-    let routeDetails = this;
+function RouteDetailsController($scope, RoutesList, ErrorService, $stateParams) {
+    let routeDetails = this,
+        directionsService = new google.maps.DirectionsService(),
+        directionsDisplay = new google.maps.DirectionsRenderer(),
+        map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: new google.maps.LatLng(-37.812150, 144.971008)
+    });
+
     routeDetails.route = {
         start: $stateParams.start,
         end: $stateParams.end
     };
 
-    var directionsService = new google.maps.DirectionsService();
-    var directionsDisplay = new google.maps.DirectionsRenderer();
-    var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 8,
-        center: new google.maps.LatLng(-37.812150, 144.971008)
-    });
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directionsPanelBody'));
 
@@ -45419,8 +45426,16 @@ function RouteDetailsController($state, $stateParams) {
     }, function (response, status) {
         if (status === 'OK') {
             directionsDisplay.setDirections(response);
+            let legs = response.routes[0].legs[0];
+            routeDetails.route.distance = legs.distance.text;
+            routeDetails.route.duration = legs.duration.text;
+            routeDetails.route.start = legs.start_address;
+            routeDetails.route.end = legs.end_address;
+            RoutesList.addRoute(routeDetails.route);
+            $scope.$apply();
         } else {
-            window.alert('Directions request failed due to ' + status);
+            ErrorService.addError('There are no results!');
+            $state.go('routes');
         }
     });
 }
@@ -45429,7 +45444,7 @@ function RouteDetailsController($state, $stateParams) {
 /* 114 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"wraper-map-and-details\">\r\n    <div class=\"wraper-map\">\r\n        <div id=\"map\"></div>\r\n    </div>\r\n    <div id=\"right-panel\">\r\n        <div id=\"directionsPanelTitle\">\r\n            From {{routeDetails.route.start}} to {{routeDetails.route.end}}\r\n        </div>\r\n        <div id=\"directionsPanelBody\"></div>\r\n    </div>\r\n</div>";
+module.exports = "<div class=\"wraper-map-and-details\">\r\n    <div class=\"wraper-map\">\r\n        <div id=\"map\"></div>\r\n    </div>\r\n    <div id=\"right-panel\">\r\n        <div id=\"directionsPanelTitle\">\r\n            FROM <b>{{routeDetails.route.start}}</b> TO <b>{{routeDetails.route.end}}</b>\r\n        </div>\r\n        <div id=\"directionsPanelBody\"></div>\r\n    </div>\r\n</div>";
 
 /***/ })
 /******/ ]);

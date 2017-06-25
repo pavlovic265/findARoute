@@ -19,7 +19,9 @@ function ErrorService(){
     }
 
     function addError(error) {
-        errors.push(error)
+        if(-1 === errors.indexOf(error)) {
+            errors.push(error)
+        }
     }
 
     return { getErrors, removeError, addError, clearErrors };

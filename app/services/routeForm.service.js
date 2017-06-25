@@ -3,9 +3,9 @@ import angular from 'angular';
 import ErrorsSrvice from './error.services';
 import RoutesList from './routesList.services';
 
-RouteForm.$inject = ['RoutesList', 'ErrorService', '$http'];
+RouteForm.$inject = ['RoutesList', 'ErrorService', '$http', '$state'];
 
-function RouteForm(RoutesList, ErrorService, $http){
+function RouteForm(RoutesList, ErrorService, $http, $state){
 
     let service = { searchRoute };
 
@@ -17,25 +17,28 @@ function RouteForm(RoutesList, ErrorService, $http){
 
     function searchRoute(route) {
         route.searching = true;
-        if(route.start === '' || route.end === '') {
+        if((route.start === '' && !route.myLocation ) || route.end === '') {
             ErrorService.addError('Filds can not be empty!');
             resetRouteValue(route);
-            return;
-        }
+        } else {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
 
-        $http.get(`/directions/${route.start}/${route.end}`)
-        .then(function(response){
-            response = extract(response);
-            route.distance = response.routes[0].legs[0].distance.text;
-            route.duration = response.routes[0].legs[0].duration.text;
-            RoutesList.addRoute(route);
-            resetRouteValue(route);
-        })
-        .catch(function(e){
-            ErrorService.addError('There was an error!')
-            resetRouteValue(route);
-        });
-    }
+                        if(route.start === '') {
+                            route.start = `${position.coords.latitude}, ${position.coords.longitude}`;
+                        }
+
+                        $state.go('details', { 'start': route.start, 'end': route.end });
+
+                    }, function() {
+                        ErrorService.addError('Filds can not be empty!');
+                    });
+                } else {
+                    ErrorService.addError('Browser dose not support geolocation!');
+                }
+            }
+        }
 
     function resetRouteValue(route) {
         route.start = '';
@@ -43,7 +46,7 @@ function RouteForm(RoutesList, ErrorService, $http){
         route.distance = '';
         route.duration = '';
         route.searching = false;
-        
+        route.myLocation = false;
     }
 }
 
