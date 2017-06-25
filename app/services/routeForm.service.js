@@ -23,7 +23,7 @@ function RouteForm(RoutesList, ErrorService, $http){
             return;
         }
 
-        $http.get(`/googleAp1i/${route.start}/${route.end}`)
+        $http.get(`/directions/${route.start}/${route.end}`)
         .then(function(response){
             response = extract(response);
             route.distance = response.routes[0].legs[0].distance.text;

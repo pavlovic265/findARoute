@@ -8886,6 +8886,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
+// import googleMapas from 'google-maps';
 
 
 
@@ -45124,10 +45125,7 @@ angular_1.ng.module('ui.router.state').provider('$uiViewScroll', $ViewScrollProv
 routing.$inject = ['$urlRouterProvider', '$locationProvider'];
 
 function routing($urlRouterProvider, $locationProvider) {
-    $locationProvider.html5Mode({
-        enabled: true,
-        requireBase: false
-    });
+    // $locationProvider.html5Mode(true);
     $urlRouterProvider.otherwise('/');
 }
 
@@ -45144,6 +45142,7 @@ function routing($urlRouterProvider, $locationProvider) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_routeForm_service__ = __webpack_require__(102);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__homeRoute_routes__ = __webpack_require__(104);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__homeRoute_controller__ = __webpack_require__(106);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__routeDetails_reouteDetails__ = __webpack_require__(111);
 
 
 
@@ -45154,7 +45153,9 @@ function routing($urlRouterProvider, $locationProvider) {
 
 
 
-/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0_angular___default.a.module('app.home', [__WEBPACK_IMPORTED_MODULE_1_angular_ui_router___default.a, __WEBPACK_IMPORTED_MODULE_2__services_routesList_services__["a" /* default */], __WEBPACK_IMPORTED_MODULE_3__services_routeForm_service__["a" /* default */]]).config(__WEBPACK_IMPORTED_MODULE_4__homeRoute_routes__["a" /* default */]).controller('HomeRouteController', __WEBPACK_IMPORTED_MODULE_5__homeRoute_controller__["a" /* default */]).name);
+
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0_angular___default.a.module('app.routes', [__WEBPACK_IMPORTED_MODULE_1_angular_ui_router___default.a, __WEBPACK_IMPORTED_MODULE_2__services_routesList_services__["a" /* default */], __WEBPACK_IMPORTED_MODULE_3__services_routeForm_service__["a" /* default */], __WEBPACK_IMPORTED_MODULE_6__routeDetails_reouteDetails__["a" /* default */]]).config(__WEBPACK_IMPORTED_MODULE_4__homeRoute_routes__["a" /* default */]).controller('HomeRouteController', __WEBPACK_IMPORTED_MODULE_5__homeRoute_controller__["a" /* default */]).name);
 
 /***/ }),
 /* 102 */
@@ -45192,7 +45193,7 @@ function RouteForm(RoutesList, ErrorService, $http) {
             return;
         }
 
-        $http.get(`/googleAp1i/${route.start}/${route.end}`).then(function (response) {
+        $http.get(`/directions/${route.start}/${route.end}`).then(function (response) {
             response = extract(response);
             route.distance = response.routes[0].legs[0].distance.text;
             route.duration = response.routes[0].legs[0].duration.text;
@@ -45264,19 +45265,19 @@ function ErrorService() {
 routes.$inject = ['$stateProvider'];
 
 function routes($stateProvider) {
-  $stateProvider.state('home', {
-    url: '/',
-    template: __webpack_require__(105),
-    controller: 'HomeRouteController',
-    controllerAs: 'homeRoute'
-  });
+    $stateProvider.state('routes', {
+        url: '/',
+        template: __webpack_require__(105),
+        controller: 'HomeRouteController',
+        controllerAs: 'homeRoute'
+    });
 }
 
 /***/ }),
 /* 105 */
 /***/ (function(module, exports) {
 
-module.exports = "<article class=\"row\">\r\n    <section class=\"col-lg-offset-4 col-lg-4 col-md-offset-4 col-md-4 col-sm-offset-4 col-sm-4\">\r\n        <form>\r\n            <label for=\"start-point\">Start point: </label>\r\n            <input type=\"text\" name=\"start-point\" class=\"form-control\"\r\n                placeholder=\"Start point...\" ng-model=\"homeRoute.route.start\" ng-disabled=\"homeRoute.route.searching\"/>\r\n            <label for=\"end-point\">End point: </label>\r\n            <input type=\"text\" name=\"end-point\" class=\"form-control\"\r\n                placeholder=\"End point...\" ng-model=\"homeRoute.route.end\" ng-disabled=\"homeRoute.route.searching\" />\r\n            <br/>\r\n            <button class=\"btn btn-primary\" ng-disabled=\"homeRoute.route.searching\"\r\n                ng-click=\"homeRoute.searchRoute(homeRoute.route);\">\r\n                {{ !homeRoute.route.searching ? 'FIND ROUTE' : 'SEARCHING..' }}\r\n            </button>\r\n        </form>\r\n    </section>\r\n    <section class=\"col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8\">\r\n        <div class=\"row\" ng-repeat=\"route in homeRoute.routes track by $index\">\r\n            <div>\r\n                <label for=\"start-point\">Start point: </label><span>{{route.start}}</span>\r\n                <label for=\"end-point\">End point: </label><span>{{route.end}}</span>\r\n            </div>\r\n\r\n            <div>\r\n                <label for=\"distance\">Destination: </label><span>{{route.distance}}</span>\r\n                <label for=\"duration\">Time: </label><span>{{route.duration}}</span>\r\n            </div>\r\n            <button class=\"btn btn-danger\" ng-click=\"homeRoute.removeRoute(route)\">REMOVE ROUTE</button>\r\n        </div>\r\n    </section>\r\n</article>";
+module.exports = "<article class=\"row\">\r\n    <section class=\"col-lg-offset-4 col-lg-4 col-md-offset-4 col-md-4 col-sm-offset-4 col-sm-4\">\r\n        <form>\r\n            <label for=\"start-point\">Start point: </label>\r\n            <input type=\"text\" name=\"start-point\" class=\"form-control\"\r\n                placeholder=\"Start point...\" ng-model=\"homeRoute.route.start\" ng-disabled=\"homeRoute.route.searching\"/>\r\n            <label for=\"end-point\">End point: </label>\r\n            <input type=\"text\" name=\"end-point\" class=\"form-control\"\r\n                placeholder=\"End point...\" ng-model=\"homeRoute.route.end\" ng-disabled=\"homeRoute.route.searching\" />\r\n            <br/>\r\n            <button class=\"btn btn-primary\" ng-disabled=\"homeRoute.route.searching\"\r\n                ng-click=\"homeRoute.searchRoute(homeRoute.route); homeRoute.routeDetails();\">\r\n                {{ !homeRoute.route.searching ? 'FIND ROUTE' : 'SEARCHING..' }}\r\n            </button>\r\n        </form>\r\n    </section>\r\n    <section class=\"col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8\">\r\n        <div class=\"row\" ng-repeat=\"route in homeRoute.routes track by $index\">\r\n            <div>\r\n                <label for=\"start-point\">Start point: </label><span>{{route.start}}</span>\r\n                <label for=\"end-point\">End point: </label><span>{{route.end}}</span>\r\n            </div>\r\n\r\n            <div>\r\n                <label for=\"distance\">Destination: </label><span>{{route.distance}}</span>\r\n                <label for=\"duration\">Time: </label><span>{{route.duration}}</span>\r\n            </div>\r\n            <button class=\"btn btn-danger\" ng-click=\"homeRoute.removeRoute(route)\">REMOVE ROUTE</button>\r\n        </div>\r\n    </section>\r\n</article>";
 
 /***/ }),
 /* 106 */
@@ -45286,9 +45287,9 @@ module.exports = "<article class=\"row\">\r\n    <section class=\"col-lg-offset-
 /* harmony export (immutable) */ __webpack_exports__["a"] = HomeRouteController;
 
 
-HomeRouteController.$inject = ['RoutesList', 'RouteForm'];
+HomeRouteController.$inject = ['RoutesList', 'RouteForm', '$state'];
 
-function HomeRouteController(RoutesList, RouteForm) {
+function HomeRouteController(RoutesList, RouteForm, $state) {
     let homeRoute = this;
     homeRoute.route = {
         searching: false,
@@ -45301,6 +45302,9 @@ function HomeRouteController(RoutesList, RouteForm) {
     homeRoute.removeRoute = RoutesList.removeRoute;
 
     homeRoute.searchRoute = RouteForm.searchRoute;
+    homeRoute.routeDetails = function () {
+        $state.go('details', { 'start': homeRoute.route.start, 'end': homeRoute.route.end });
+    };
 }
 
 /***/ }),
@@ -45339,6 +45343,93 @@ function ErrorController(ErrorService) {
     errorCtrl.removeError = ErrorService.removeError;
     errorCtrl.clearError = ErrorService.clearError;
 }
+
+/***/ }),
+/* 109 */,
+/* 110 */,
+/* 111 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_angular__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_angular___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_angular__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_angular_ui_router__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_angular_ui_router___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_angular_ui_router__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__reouteDetails_routes__ = __webpack_require__(112);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__reouteDetails_controller__ = __webpack_require__(113);
+
+
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0_angular___default.a.module('app.routes.details', [__WEBPACK_IMPORTED_MODULE_1_angular_ui_router___default.a]).config(__WEBPACK_IMPORTED_MODULE_2__reouteDetails_routes__["a" /* default */]).controller('RouteDetailsController', __WEBPACK_IMPORTED_MODULE_3__reouteDetails_controller__["a" /* default */]).name);
+
+/***/ }),
+/* 112 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = routes;
+
+
+routes.$inject = ['$stateProvider'];
+
+function routes($stateProvider) {
+    $stateProvider.state('details', {
+        url: '/details/:start/:end',
+        template: __webpack_require__(114),
+        controller: 'RouteDetailsController',
+        controllerAs: 'routeDetails'
+    });
+}
+
+/***/ }),
+/* 113 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = RouteDetailsController;
+
+
+RouteDetailsController.$inject = ['$state', '$stateParams'];
+
+function RouteDetailsController($state, $stateParams) {
+    let routeDetails = this;
+    routeDetails.route = {
+        start: $stateParams.start,
+        end: $stateParams.end
+    };
+
+    var directionsService = new google.maps.DirectionsService();
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: new google.maps.LatLng(-37.812150, 144.971008)
+    });
+    directionsDisplay.setMap(map);
+    directionsDisplay.setPanel(document.getElementById('directionsPanelBody'));
+
+    directionsService.route({
+        origin: $stateParams.start,
+        destination: $stateParams.end,
+        travelMode: google.maps.DirectionsTravelMode.DRIVING
+    }, function (response, status) {
+        if (status === 'OK') {
+            directionsDisplay.setDirections(response);
+        } else {
+            window.alert('Directions request failed due to ' + status);
+        }
+    });
+}
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"wraper-map-and-details\">\r\n    <div class=\"wraper-map\">\r\n        <div id=\"map\"></div>\r\n    </div>\r\n    <div id=\"right-panel\">\r\n        <div id=\"directionsPanelTitle\">\r\n            From {{routeDetails.route.start}} to {{routeDetails.route.end}}\r\n        </div>\r\n        <div id=\"directionsPanelBody\"></div>\r\n    </div>\r\n</div>";
 
 /***/ })
 /******/ ]);

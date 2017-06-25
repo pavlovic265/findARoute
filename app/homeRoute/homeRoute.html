@@ -9,7 +9,7 @@
                 placeholder="End point..." ng-model="homeRoute.route.end" ng-disabled="homeRoute.route.searching" />
             <br/>
             <button class="btn btn-primary" ng-disabled="homeRoute.route.searching"
-                ng-click="homeRoute.searchRoute(homeRoute.route);">
+                ng-click="homeRoute.searchRoute(homeRoute.route); homeRoute.routeDetails();">
                 {{ !homeRoute.route.searching ? 'FIND ROUTE' : 'SEARCHING..' }}
             </button>
         </form>

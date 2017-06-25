@@ -4,7 +4,7 @@ var request = require('request');
 
 app.use(express.static('public'));
 
-app.use('/googleApi/:start/:end', function(req, res, next){
+app.use('/directions/:start/:end', function(req, res, next){
     request({
         url: `https://maps.googleapis.com/maps/api/directions/json?origin=${req.params.start}&destination=${req.params.end}&key=AIzaSyBj_FS2naYF-iT06-nXk_3lhCQEQQrCYbg`,
         type: 'GET',

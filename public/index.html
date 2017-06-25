@@ -2,19 +2,23 @@
 <html ng-app="app">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
         <title>Angular App</title>
-        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBj_FS2naYF-iT06-nXk_3lhCQEQQrCYbg&libraries=places"></script>    </head>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
     <body>
-            <article ng-controller="ErrorController as errorCtrl">
-                <section class="alert alert-danger" ng-repeat="error in errorCtrl.errors track by $index">
-                    <strong>Danger!</strong> {{error}}
-                </section>
-            </article>
-        <div class="container">
+        <article ng-controller="ErrorController as errorCtrl">
+            <section class="alert alert-danger" ng-repeat="error in errorCtrl.errors track by $index">
+                <strong>Danger!</strong> {{error}}
+            </section>
+        </article>
+        <div>
 
             <ui-view></ui-view>
 
         </div>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBj_FS2naYF-iT06-nXk_3lhCQEQQrCYbg&libraries=places"></script>
         <script type="text/javascript" src="bundel.js"></script>
+        <!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBj_FS2naYF-iT06-nXk_3lhCQEQQrCYbg&libraries=places"> </script>-->
     </body>
 </html>

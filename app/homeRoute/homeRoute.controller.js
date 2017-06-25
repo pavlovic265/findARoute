@@ -1,7 +1,7 @@
 
-HomeRouteController.$inject = ['RoutesList', 'RouteForm'];
+HomeRouteController.$inject = ['RoutesList', 'RouteForm', '$state'];
 
-export default function HomeRouteController(RoutesList, RouteForm) {
+export default function HomeRouteController(RoutesList, RouteForm, $state) {
     let homeRoute = this;
         homeRoute.route = {
             searching: false,
@@ -14,4 +14,7 @@ export default function HomeRouteController(RoutesList, RouteForm) {
     homeRoute.removeRoute = RoutesList.removeRoute;
 
     homeRoute.searchRoute = RouteForm.searchRoute;
+    homeRoute.routeDetails = function(){
+        $state.go('details', { 'start': homeRoute.route.start, 'end': homeRoute.route.end });
+    };
 }
